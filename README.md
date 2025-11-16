@@ -1,39 +1,61 @@
-# JPX Code Retriever
+# JPX Data Retriever
 
-`myhappydays.jpx_code` is a Python tool designed to streamline the process of downloading, caching, and parsing the stock listings from the Japan Exchange Group (JPX) Prime Market.
-
-This utility automates the retrieval of the official stock list Excel file (`data_j.xls`), processes it effectively, and provides the data as a neatly formatted pandas DataFrame, ready for analysis.
+The JPX Data Retriever is a Python module designed to obtain and process the Japanese stock list from the Japan Exchange Group (JPX) website. It efficiently downloads, caches, and parses the stock data into a pandas DataFrame, making it easy for analysts and developers to integrate JPX stock information into their applications.
 
 ## Features
 
-- **Automated Download:** Seamlessly identifies and retrieves the latest stock list from the JPX's official statistics page.
-- **Efficient Caching:** Stores the downloaded file locally, reducing redundant network requests. Cached data is valid for 30 days, ensuring up-to-date information while minimizing downloads.
-- **Advanced Processing:** Extracts and processes data focusing on the "Prime Market" stocks, selecting only the pertinent columns.
-- **User-Friendly DataFrame:** Outputs data in a pandas DataFrame with English column names for easy manipulation and understanding (e.g., `code`, `name`, `kind_name`).
+- Downloads the latest JPX stock list directly from the JPX website.
+- Caches the downloaded data locally and checks for updates every 30 days.
+- Processes the downloaded Excel file into a pandas DataFrame.
+- Filters the data to provide only stocks listed on the Prime Market.
+
+## Installation
+
+To use the JPX Data Retriever, ensure you have the following prerequisites:
+
+- Python 3.x
+- Required Python packages: `pandas`, `urllib3`, `beautifulsoup4`, `platformdirs`
+
+Install the necessary packages using pip:
+
+```bash
+pip install pandas urllib3 beautifulsoup4 platformdirs
+```
 
 ## Usage
 
-Create an instance of `JPXDataDownloader` and use the `.df()` method to obtain the stock list. The first invocation handles the downloading and caching, while subsequent calls within a 30-day period will use the cached file.
+To retrieve and display the JPX Prime Market stock list, run the following script:
 
 ```python
-from myhappydays.jpx_code import JPXDataDownloader
+from myhappydays.investment.jpx_code import JPXDataRetriever
 
-# Initialize the downloader
-jpx = JPXDataDownloader()
-
-# Retrieve the stock list as a pandas DataFrame
-# This process manages downloading and caching seamlessly
-prime_market_stocks_df = jpx.df()
-
-# Display the first 5 rows of the data
-print(prime_market_stocks_df.head())
-
-# Expected Output:
-#
-#    code    name        kind      kind_name    scale    scale_name
-# 0  1301    極洋        0050      水産・農林業  1        TOPIX Core30
-# 1  1332  ニッスイ      0050      水産・農林業  1        TOPIX Core30
-# 2  1333  マルハニチロ  0050      水産・農林業  1        TOPIX Core30
-# 3  1375  雪国まいたけ  0050      水産・農林業  -        -
-# 4  1376  カネコ種苗    0050      水産・農林業  -        -
+retriever = JPXDataRetriever()
+try:
+    stock_list_df = retriever.get_prime_market_list()
+    print("Successfully retrieved data.")
+    print(f"Cache file location: {retriever.cache_file}")
+    print("\nFirst 5 entries:")
+    print(stock_list_df.head())
+except (JPXDataDownloadError, JPXDataAccessError, FileNotFoundError) as e:
+    print(f"Error: {e}")
 ```
+
+## Classes
+
+### JPXDataRetriever
+
+- **Purpose**: Handles the retrieval, caching, and processing of JPX stock data.
+- **Key Methods**:
+  - `get_prime_market_list()`: Returns the JPX Prime Market stock list as a pandas DataFrame.
+
+### JPXDataDownloadError
+
+- **Purpose**: Raised when a network-level error occurs during data download.
+
+### JPXDataAccessError
+
+- **Purpose**: Raised when the data cannot be accessed due to page structure changes, missing files, or unreadable content.
+
+## License
+
+This project is open-sourced and available for use under the MIT License. See the LICENSE file for details.
