@@ -1,0 +1,21 @@
+[project]
+name = "myhappydays.investment.jpx_code"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Takushi Usami",email = "takushi1969@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "beautifulsoup4 (>=4.14.2,<5.0.0)",
+    "pandas (>=2.3.3,<3.0.0)",
+    "platformdirs (>=4.5.0,<5.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "myhappydays", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
