@@ -1,9 +1,16 @@
 name: Workflow test
 on: [push]
 jobs:
-  ci:
+  pypi-publish:
+    name: Upload release to PyPI
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/myhappydays-investment-jpx_code
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
+    # retrieve your distributions here
       - uses: actions/checkout@v4
       - name: Install Python
         uses: actions/setup-python@v4
@@ -28,18 +35,5 @@ jobs:
         run: poetry run pytest -v
       - name: Build the package
         run: poetry build
-
-  pypi-publish:
-    name: Upload release to PyPI
-    needs: ci
-    runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/p/myhappydays-investment-jpx_code
-    permissions:
-      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
-    steps:
-    # retrieve your distributions here
-
-    - name: Publish package distributions to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
